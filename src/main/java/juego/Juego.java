@@ -12,29 +12,67 @@ public class Juego {
         this.columnas = columnas;
         this.minas = minas;
         tablero = new Casilla[filas][columnas];
+
 // TODO: Inicializar la matriz con objetos Casilla
+
         int bombas=0;
         for(int i =0; i<filas;i++) {
             for(int j=0;j<columnas;j++) {
                 tablero[i][j] = new Casilla(i,j);
             }
         }
+// TODO: Colocar minas aleatoriamente
+
         Random rand = new Random();
         while(bombas<minas) {
             int filasRND = rand.nextInt(filas);
             int columnasRND = rand.nextInt(columnas);
             if(!tablero[filasRND][columnasRND].isMina()) {
                 tablero[filasRND][columnasRND].setMina(true);
+                bombas++;
             }
         }
-// TODO: Colocar minas aleatoriamente
 
-// TODO: Calcular minas adyacentes para cada casilla
+        for(int i =0; i<filas;i++) {
+            for(int j=0;j<columnas;j++) {
+                buscarMinas(tablero[i][j]);
+                System.out.println(tablero[i][j].getMinasAdyacentes());
+            }
+        }
+
     }
+
+    public void buscarMinas(Casilla casilla) {
+        int fila = casilla.getFila();
+        int columna = casilla.getColumna();
+
+        if (casilla.isMina()) return;
+
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                if (i == 0 && j == 0) continue;
+                int f = fila + i;
+                int c = columna + j;
+                if (f >= 0 && f < tablero.length && c >= 0 && c < tablero[0].length) {
+                    Casilla vecina = tablero[f][c];
+                    if (vecina != null && vecina.isMina()) {
+                        casilla.incrementarMinasAdyacentes();
+                    }
+                }
+            }
+        }
+    }
+
+
     // TODO: Método para descubrir casilla
     public boolean descubrirCasilla(int f, int c) {
         return true; // placeholder
     }
+
+    public Casilla getCasilla(int fila, int columna) {
+        return tablero[fila][columna];
+    }
+
     public Casilla[][] getTablero() { return tablero; }
     public int getFilas() { return filas; }
     public int getColumnas() { return columnas; }

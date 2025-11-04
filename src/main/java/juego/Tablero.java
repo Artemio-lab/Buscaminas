@@ -1,28 +1,22 @@
 package juego;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
 
 public class Tablero {
     private GridPane grid;
-    private Juego juego;
-    public Tablero(int filas, int columnas, int minas) {
+
+    public Tablero(int filas, int columnas) {
         grid = new GridPane();
-        juego = new Juego(filas, columnas, minas);
+        grid.setMaxSize(Region.USE_COMPUTED_SIZE, Region.USE_COMPUTED_SIZE);
 // TODO: Inicializar botones en el GridPane
-        Button button = new Button();
-        button.setPrefSize(50, 50);
-        GridPane.setRowIndex(button, filas);
-        GridPane.setColumnIndex(button, columnas);
-
-        button.setGraphic("BombaConFondo.png");
-        GridPane.setConstraints(label, 2, 0); // column=2 row=0
-
-        grid.getChildren().addAll(button, label);
-
-
 // TODO: Asignar eventos a cada botón
 // TODO: Mostrar minas y número de minas adyacentes al hacer clic
+    }
+
+    public void llenarGridPanel(Casilla casilla) {
+        CasillaUI casillaUI = new CasillaUI(casilla);
+        grid.add(casillaUI, casilla.getColumna(), casilla.getFila());
     }
     public GridPane getGrid() { return grid; }
 }

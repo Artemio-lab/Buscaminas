@@ -6,67 +6,44 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 
+import java.util.Objects;
+
 public class CasillaUI extends StackPane {
 
-    private Casilla casilla;
-    private Button boton;
-    private final ImageView imagenCasilla;
+    private final Casilla casilla;
+    private final Button boton;
     private final int tam;
 
     public CasillaUI(Casilla casilla) {
+        boton = new Button();
         this.casilla = casilla;
         tam =50;
 
-        Image image = cargarImagen("a");
-        imagenCasilla = new ImageView(image);
+        Image image = cargarImagen(actualizarURL());
+        ImageView imagenCasilla = new ImageView(image);
         imagenCasilla.setFitHeight(tam);
         imagenCasilla.setFitWidth(tam);
+
+        boton.setGraphic(imagenCasilla);
+
         this.getChildren().add(imagenCasilla);
 
         this.setCursor(Cursor.HAND);
         this.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 6, 0, 2, 2);");
     }
 
-    public String actualizarURL(){
-        String url="";
-        if(!casilla.isDescubierta()){
-            url ="/juego/ImagenesMinas/FondoDescubiertoRoto.png";
-        }else{
-            if(casilla.isMina()){
-                url ="/juego/ImagenesMinas/BombaConFondo.png";
-            }else {
-                switch (casilla.getMinasAdyacentes()) {
-                    case 0:
-                        url = "/juego/ImagenesMinas/FondoDescubierto0.png";
-                        break;
-                    case 1:
-                        url = "/juego/ImagenesMinas/FondoDescubierto1.png";
-                        break;
-                    case 2:
-                        url = "/juego/ImagenesMinas/FondoDescubierto2.png";
-                        break;
-                    case 3:
-                        url = "/juego/ImagenesMinas/FondoDescubierto3.png";
-                        break;
-                    case 4:
-                        url = "/juego/ImagenesMinas/FondoDescubierto4.png";
-                        break;
-                    case 5:
-                        url = "/juego/ImagenesMinas/FondoDescubierto5.png";
-                        break;
-                    case 6:
-                        url = "/juego/ImagenesMinas/FondoDescubierto6.png";
-                        break;
-                    case 7:
-                        url = "/juego/ImagenesMinas/FondoDescubierto7.png";
-                        break;
-                    case 8:
-                        url = "/juego/ImagenesMinas/FondoDescubierto8.png";
-                        break;
-                }
+    public String actualizarURL() {
+        String url = "";
+        if (casilla.isDescubierta()) {
+            url = "/juego/ImagenesMinas/FondoDeBloqueRoto.png";
+        } else {
+            if (casilla.isMina()) {
+                url = "/juego/ImagenesMinas/BombaConFondo.png";
+            } else {
+                url = "/juego/ImagenesMinas/FondoDescubierto"+casilla.getMinasAdyacentes()+".png";
+                System.out.println(casilla.getMinasAdyacentes());
             }
         }
-
         return url;
     }
 
@@ -76,9 +53,7 @@ public class CasillaUI extends StackPane {
         try {
             if (url == null || url.isEmpty()) return null;
 
-            Image image = new Image(url, tam, tam, true, true);
-            return image.isError() ? null : image;
-
+            return new Image(Objects.requireNonNull(getClass().getResource(url)).toExternalForm(), tam, tam, true, true);
         } catch (Exception e) {
             System.out.println("La imagen no cargo: " + url + " → " + e.getMessage());
             return null;
