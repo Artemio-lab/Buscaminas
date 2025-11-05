@@ -11,14 +11,43 @@ public class Controlador {
         juego = new Juego(filas, columnas, minas);
         this.filas = filas;
         this.columnas = columnas;
-        llenarTablero();
+        actualizarTablero();
     }
 
-    public void llenarTablero() {
-        for(int i =0; i<columnas; i++){
-            for(int j =0; j<filas; j++){
-                tablero.llenarGridPanel(juego.getCasilla(j,i));
+
+    public void actualizarTablero() {
+        tablero.actualizarTablero(juego,this);
+
+        for (int fila = 0; fila < filas; fila++) {
+            for (int columna = 0; columna < columnas; columna++) {
+                Casilla casilla = juego.getCasilla(fila, columna);
+                CasillaUI casillaUI = new CasillaUI(casilla);
+
+                int f = fila;
+                int c = columna;
+
+                casillaUI.setOnDescubrir(() -> {
+                    boolean perdio = juego.descubrirCasilla(f, c);
+                    if (perdio) {
+                        juego.descubrirBombas();
+                        tablero.ventanaPerder();
+                    }
+                    if(juego.getCasilla(f,c).getMinasAdyacentes()==0) {
+                        juego.descubrirAlrededor(f, c);
+                    }
+                    actualizarTablero();
+
+                    buscarVictoria();
+                });
+
+                tablero.agregarCasilla(casillaUI, fila, columna);
             }
+        }
+    }
+
+    public void buscarVictoria() {
+        if(juego.verificarTablero()){
+            tablero.ventanaGanar();
         }
     }
 

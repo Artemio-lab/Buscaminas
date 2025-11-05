@@ -63,10 +63,59 @@ public class Juego {
         }
     }
 
+    public void descubrirAlrededor(int fila, int columna) {
+
+        for (int i = -1; i <= 1; i++) {
+            for (int j = -1; j <= 1; j++) {
+                if (i == 0 && j == 0) continue;
+                int f = fila + i;
+                int c = columna + j;
+                if (f >= 0 && f < tablero.length && c >= 0 && c < tablero[0].length) {
+                    Casilla vecina = tablero[f][c];
+                    if (vecina != null && !vecina.isMina()) {
+                        if(vecina.getMinasAdyacentes()==0 && !vecina.isDescubierta()) {
+                            vecina.setDescubierta(true);
+                            descubrirAlrededor(vecina.getFila(), vecina.getColumna());
+                        }else{
+                            vecina.setDescubierta(true);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean verificarTablero(){
+        int espaciosDescubiertos=0;
+        for(int i =0; i<filas;i++) {
+            for(int j =0; j<columnas;j++) {
+                if(tablero[i][j].isDescubierta()) {
+                    espaciosDescubiertos++;
+                }
+            }
+        }
+
+        if(espaciosDescubiertos==(this.filas*this.columnas)-this.minas){
+            return true;
+        }
+        return false;
+    }
+
+    public void descubrirBombas(){
+        for(int i =0; i<filas;i++) {
+            for(int j =0; j<columnas;j++) {
+                if(tablero[i][j].isMina()) {
+                    tablero[i][j].setDescubierta(true);
+                }
+            }
+        }
+    }
+
 
     // TODO: Método para descubrir casilla
     public boolean descubrirCasilla(int f, int c) {
-        return true; // placeholder
+        tablero[f][c].setDescubierta(true);
+        return tablero[f][c].isMina();
     }
 
     public Casilla getCasilla(int fila, int columna) {

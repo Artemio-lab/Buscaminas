@@ -13,52 +13,49 @@ public class CasillaUI extends StackPane {
     private final Casilla casilla;
     private final Button boton;
     private final int tam;
+    private Runnable descubrirCasilla;
 
     public CasillaUI(Casilla casilla) {
-        boton = new Button();
         this.casilla = casilla;
-        tam =50;
+        this.tam = 50;
+        this.boton = new Button();
 
         Image image = cargarImagen(actualizarURL());
         ImageView imagenCasilla = new ImageView(image);
         imagenCasilla.setFitHeight(tam);
         imagenCasilla.setFitWidth(tam);
-
         boton.setGraphic(imagenCasilla);
 
-        this.getChildren().add(imagenCasilla);
+        boton.setOnAction(e -> {
+            if (!casilla.isDescubierta() && descubrirCasilla != null) {
+                descubrirCasilla.run();
+            }
+        });
 
+        this.getChildren().add(boton);
         this.setCursor(Cursor.HAND);
-        this.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 6, 0, 2, 2);");
     }
 
     public String actualizarURL() {
-        String url = "";
-        if (casilla.isDescubierta()) {
-            url = "/juego/ImagenesMinas/FondoDeBloqueRoto.png";
+        if (!casilla.isDescubierta()) {
+            return "/juego/ImagenesMinas/FondoDeBloqueRoto.png";
+        } else if (casilla.isMina()) {
+            return "/juego/ImagenesMinas/BombaConFondo.png";
         } else {
-            if (casilla.isMina()) {
-                url = "/juego/ImagenesMinas/BombaConFondo.png";
-            } else {
-                url = "/juego/ImagenesMinas/FondoDescubierto"+casilla.getMinasAdyacentes()+".png";
-                System.out.println(casilla.getMinasAdyacentes());
-            }
+            return "/juego/ImagenesMinas/FondoDescubierto" + casilla.getMinasAdyacentes() + ".png";
         }
-        return url;
     }
 
     public Image cargarImagen(String url) {
-        this.getChildren().clear();
-
         try {
-            if (url == null || url.isEmpty()) return null;
-
             return new Image(Objects.requireNonNull(getClass().getResource(url)).toExternalForm(), tam, tam, true, true);
         } catch (Exception e) {
-            System.out.println("La imagen no cargo: " + url + " → " + e.getMessage());
+            System.out.println("No se pudo cargar la imagen: " + url);
             return null;
         }
     }
 
-    public Button getBoton() { return boton; }
+    public void setOnDescubrir(Runnable accion) {
+        this.descubrirCasilla = accion;
+    }
 }

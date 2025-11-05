@@ -1,0 +1,12 @@
+.button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0;
+}
+
+.grid-pane {
+    -fx-background-color: transparent;
+    -fx-hgap: 0;
+    -fx-vgap: 0;
+    -fx-padding: 0;
+}
